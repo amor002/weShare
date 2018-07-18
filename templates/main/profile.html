@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block body %}
+    <style>
+
+    .main {
+        background-color: #eaf8ff;
+        box-shadow: 5px 5px 5px 5px #888888;
+        width: 600px;
+        {% if password_phase %}
+        height: 300px;
+        {% else %}
+        height: 500px;
+        {% endif %}
+        margin-top: 80px;
+        margin-bottom: 20px;
+
+    }
+
+
+    #form {
+        padding: 20px;
+    }
+
+    .sub > * {
+        width: 300px;
+    }
+
+    .row {
+        margin-top: 25px;
+    }
+
+    </style>
+    {% include 'main/navbar.html' %}
+    <form class="main container" id="form" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+        {% for field in form %}
+        <div class="row">
+            <div class="col col-md-3">
+                <p>{{ field.label_tag }} </p>
+            </div>
+            <div class="col col-md-6">
+                <div class="sub" {% if not password_phase %}style="font-size: 12px"{% endif %}>
+                    {{ field.errors}}
+                    {{ field }}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% if not password_phase %}
+            current image: <img src="{{ image }}" width="50" height="50" alt="image"/><br/>
+            <a href="{% url 'main:change-password' %}">change password from here.</a>
+        {% endif %}
+
+        <button type="submit" class="btn btn-success" style="margin-left: 430px;{% if password_phase %}margin-top:70px;{% endif %}">submit changes</button>
+    </form>
+
+
+    {% include 'main/footer.html' %}
+{% endblock %}

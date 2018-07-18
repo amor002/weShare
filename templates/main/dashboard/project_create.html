@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block head %}
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'main/home/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="{% static 'main/home/css/shop-item.css' %}" rel="stylesheet">
+    <style>
+      #footer {
+          margin-top: 10px;
+      }
+
+
+      #map {
+          width: 350px;
+          height: 300px;
+          background-color: grey;
+          margin-left: -75px;
+      {% if not update_mode %}
+          border: 1px solid red;
+      {% endif %}
+
+      }
+
+      .help-text {
+          color: grey;
+          margin-bottom: -3px;
+          font-size: 14px
+      }
+
+      {% if not update_mode %}
+      #id_image {
+          display: none;
+      }
+      {% endif %}
+
+    </style>
+{% endblock %}
+
+  {% block body %}
+
+    <!-- Navigation -->
+    {% include 'main/navbar.html' %}
+
+    <!-- Page Content -->
+    <div class="container">
+
+      <form class="row" method="post" id="form" enctype="multipart/form-data"> {% csrf_token %}
+
+        <div class="col-lg-3" style="margin-top: 15px">
+            <p class="help-text">*enter your project name</p>
+            {{ form.name }}
+            {{ form.longitude }}
+            {{ form.latitude }}
+            <button type="submit" id="submit-btn" style="margin: 10px 10px 10px 10px" class="btn btn-success btn-lg">submit project</button>
+            <p class="help-text">*add marker on the project location</p>
+            <div id="map"></div>
+        </div>
+
+        <!-- /.col-lg-3 -->
+
+        <div class="col-lg-9">
+
+          <p id="image-help" class="help-text" style="margin-top: 10px;color: red">*upload image</p>
+          <div class="card mt-4">
+              {{ form.image }}
+              <a href="#" onclick="uploadImage()" ><img class="card-img-top img-fluid" src="{% static 'main/imagePlaceHolder.jpg' %}" style="height: 400px;{% if not update_mode %}border: 1px solid red{% endif %}" alt=""></a>
+            <div class="card-body">
+              <p class="card-title help-text">*enter a title</p>
+              {{ form.title }}
+
+                <p class="card-title help-text">*enter the project address</p>
+               {{ form.address }}
+
+              <p class="help-text">*enter a description</p>
+              {{ form.description }}
+
+            </div>
+          </div>
+
+        </div>
+
+      </form>
+
+    </div>
+
+    <!-- Footer -->
+    {% include 'main/footer.html' %}
+
+  {% endblock %}
+
+{% block javascript %}
+    <!-- Bootstrap core JavaScript -->
+    <script src="{% static 'main/home/vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'main/home/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script>
+      var map;
+      var longitude = null;
+      var latitude = null;
+      var marker = null;
+
+      function initMap() {
+
+          {% if update_mode %}
+              var position = {lat: {{ latitude }}, lng: {{ longitude }} };
+          {% else %}
+              var position = {lat: 1.7597445, lng: 15.7024725};
+          {% endif %}
+
+          map = new google.maps.Map(document.getElementById('map'), {
+              center: position,
+              zoom: {% if update_mode %}10{% else %}2{% endif %}
+          });
+
+          map.addListener('click', function(event) {
+              if(marker != null) {
+                  marker.setMap(null);
+              }
+              marker = new google.maps.Marker({map:map, position: event.latLng});
+              latitude = event.latLng.lat();
+              longitude = event.latLng.lng();
+              $("#latitude").val(latitude);
+              $("#longitude").val(longitude);
+              $("#map").css("border-color", "green");
+        });
+
+          {% if update_mode %}
+
+              marker = new google.maps.Marker({
+                  map: map,
+                  position: {lat: {{ latitude }}, lng: {{ longitude }} }
+              });
+          {% endif %}
+      }
+
+      function uploadImage() {
+          $("#id_image").click();
+
+      }
+
+      $("#id_image").change(function(){
+         var imageHelp = $("#image-help");
+         imageHelp.text("image uploaded: "+$(this).val());
+         imageHelp.css("color", "green");
+         $("img").css("border-color", "green");
+
+      });
+
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=<your_key>&callback=initMap" async defer></script>
+
+
+{% endblock %}

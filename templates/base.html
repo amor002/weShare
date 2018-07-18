@@ -1,0 +1,30 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="{% static 'weshare.png' %}">
+    {% if custom_bootstrap %}
+    {% else %}
+        <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" />
+    {% endif %}
+
+    <title>weShare</title>
+    {% block head %}
+
+    {% endblock %}
+</head>
+<body>
+{% block body %}
+
+{% endblock %}
+
+   <script src="{% static 'jquery.js' %}"></script>
+   <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+{% block javascript %}
+{% endblock %}
+</body>
+</html>

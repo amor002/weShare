@@ -1,0 +1,86 @@
+{% load staticfiles %}
+
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+      <div class="container">
+        <img src="{% static 'weshare.png' %}" alt="weShare" width="40" height="40" style="text-align: left"/>
+        <a class="navbar-brand" href="#">weShare</a>
+
+        <form class="form-inline my-2 my-lg-0"  method="post" action="{% url 'main:search' %}"> {% csrf_token %}
+
+            <input class="form-control mr-sm-2" type="search" placeholder="Search..." aria-label="Search" name="content" style="margin-left: 50px;width: 250px">
+            <select name="search_option" class="custom-select custom-select-md">
+                <option value="project">project</option>
+                {% if normal_account %}
+                    <option value="user">user</option>
+                {% endif %}
+            </select>
+        </form>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="#">welcome<u style="color: #f4ff95"> {{ user.first_name }} {{ user.last_name }}/</u></a>
+            </li>
+            <li class="nav-item {{ home_active }}">
+              <a class="nav-link" href="{% url 'main:home' %}">Home
+                <span class="sr-only">(current)</span>
+              </a>
+            </li>
+            <li class="nav-item {{ profile_active }}">
+              <a class="nav-link" href="{% url 'main:edit-profile' %}">Profile</a>
+            </li>
+
+              {% if normal_account %}
+            <li class="nav-item dropdown {{ friends_active }}">
+              <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="#">
+                  {% if user.profile.suggestions.all %}
+                      <span class="badge badge-primary badge-pill">{{ user.profile.suggestions.all.count }}</span>
+                  {% else %}
+                      <span id="invitation-count" class="badge badge-primary badge-pill" hidden></span>
+                  {% endif %}
+                  Friends
+                  {% if user.pendingfriendrequests.array.all %}
+                      <span id="pending-friend-request" class="badge badge-success badge-pill">{{ user.pendingfriendrequests.array.all.count }}</span>
+                  {% else %}
+                      <span id="pending-friend-request" hidden class="badge badge-success badge-pill">0</span>
+                  {% endif %}
+              </a>
+              <div class="dropdown-menu" style="width: 150%;white-space: normal;text-align: center" aria-labelledby="navbarDropdown">
+                  <a href="{% url 'main:view-friends' %}" style="text-align: center">view friends</a>
+                  <div class="dropdown-divider"></div>
+                  <div id="friends-requests">
+                  {% for profile in user.pendingfriendrequests.array.all %}
+                      <div>
+                          <p> <b>{{ profile.user.username }}</b> wants to be a friend with you</p>
+                          <a id="accept-{{ profile.pk }}" onclick="acceptRequest(this)" style="width: 60px;padding: 3px" href="#" class="btn btn-success">accept</a>
+                          <a id="decline-{{ profile.pk }}" onclick="declineRequest(this)" href="#">decline</a>
+                          <div class="dropdown-divider"></div>
+                      </div>
+                  {% endfor %}
+                  {% for invitation in user.profile.suggestions.all %}
+                      <div>
+                          <p><b>{{ invitation.user }}</b> invites you to see <a onclick="removeInvitation(this)" id="{{ invitation.id }}" href="{% url 'main:view-project' invitation.project.pk %}">{{ invitation.project.name }}</a></p>
+                      </div>
+                  {% endfor %}
+                  </div>
+              </div>
+            </li>
+             {% else %}
+                <li class="nav-item {{ dashboard_active }}">
+                    <a class="nav-link" href="{% url 'main:dashboard' %}">Dashboard</a>
+                </li>
+             {% endif %}
+
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'main:logout' %}">logout</a>
+            </li>
+          </ul>
+
+        </div>
+      </div>
+</nav>
+
+

@@ -1,0 +1,239 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block head %}
+
+    <!-- Custom styles for this template -->
+    <link href="{% static 'main/home/css/shop-item.css' %}" rel="stylesheet">
+    <style>
+      #footer {
+          margin-top: 10px;
+      }
+
+      #map {
+          width: 50%;
+          height: 100%;
+          background-color: grey;
+      }
+
+      .user-detail {
+          background-color: #FFF;
+      }
+        .loader {
+        border: 16px solid #f3f3f3; /* Light grey */
+        border-top: 16px solid #3498db; /* Blue */
+        border-radius: 50%;
+        width: 100px;
+        height: 100px;
+        animation: spin 2s linear infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    </style>
+{% endblock %}
+
+  {% block body %}
+
+    <!-- Navigation -->
+    {% include 'main/navbar.html' %}
+
+    <!-- Page Content -->
+    <div class="container">
+
+      <div class="row">
+
+        <div class="col-lg-3">
+          <h1 class="my-4">{{ project.name }}</h1>
+          <div class="user-detail">
+              <p>user: {{ project.user.username }}</p>
+              <p>email: {{ project.user.email }}</p>
+          </div>
+          {% if normal_account %}
+          <button class="btn btn-primary btn-lg" onclick="loadFriends()" data-toggle="modal" data-target="#exampleModalLong">invite friend</button>
+          {% endif %}
+        </div>
+        <!-- /.col-lg-3 -->
+
+        <div class="col-lg-9">
+
+          <div class="card mt-4">
+              <div class="row">
+                  <img id="img"  style="width: 426.5px;height: 331.717px"  src="{{ project.image.url }}"  alt="img"/>
+                  <div id="map"></div>
+              </div>
+            <div class="card-body">
+              <h3 class="card-title">{{ project.title }}</h3>
+              <h4>{{ project.address }}</h4>
+              <p class="card-text">{{ project.description }}</p>
+                <span class="text-warning">
+                   {% for i in full_stars %}
+                        &#9733;
+                    {% endfor %}
+                    {% for i in empty_stars %}
+                        &#9734;
+                    {% endfor %}
+                </span>
+              {{ project.rating }} stars
+              {% if not user_rated %}
+              <div>
+                <input type="number" style="width: 50px;margin-left: 20px" value="0" id="rating" min="0" max="5"/>
+                <a href="#" onclick="rateProject()">rate project</a>
+              </div>
+              {% else %}
+                  <p>already rated</p>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="card card-outline-secondary my-4">
+            <div class="card-header">
+              Project Reviews
+            </div>
+            <div class="card-body">
+              <div class="row">
+                  <input type="text" placeholder="leave a comment..." class="col col-md-9.5 form-control" id="comment"/>
+                  <button style="margin-left: 3px" id="comment-submit" class="btn btn-success" onclick="leaveComment()" disabled>Leave a Review</button>
+              </div>
+               <hr/>
+              {% for comment in project.comment_set.all reversed %}
+                  <p>{{ comment.text }}</p>
+                  <small class="text-muted">Posted by {{ comment.user.username }} on {{ comment.pub_date }}</small>
+                  <hr/>
+              {% endfor %}
+            </div>
+          </div>
+
+        </div>
+        <!-- /.col-lg-9 -->
+
+      </div>
+    <!-- Modal -->
+        <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">friends</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body" id="friends-view" style="text-align: center">
+                  <div class="loader"></div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+    </div>
+    <!-- /.container -->
+
+    <!-- Footer -->
+    {% include 'main/footer.html' %}
+
+  {% endblock %}
+
+{% block javascript %}
+
+    <script>
+      var map;
+      var longitude;
+      var latitude;
+      var marker = null;
+
+      function initMap() {
+          map = new google.maps.Map(document.getElementById('map'), {
+              center: {lat: {{ project.latitude }}, lng: {{ project.longitude }}},
+              zoom: 10
+          });
+
+          new google.maps.Marker({map: map, position: {
+              lat: {{ project.latitude }},
+              lng: {{ project.longitude }}
+          } })
+
+      }
+
+
+      {% if normal_account %}
+      {% include 'main/home/sync.js' %}
+
+      function loadFriends() {
+          $.ajax({
+              url: "{% url 'main:load-friends' %}",
+              type: 'get',
+              success: function(friends) {
+                  $(".loader").hide();
+                  $("#friends-view").html(friends);
+
+              }
+          });
+      }
+
+      function inviteFriend(friend) {
+          $("#exampleModalLong").modal("hide");
+          $.ajax({
+              url: "{% url 'main:invite-friend' %}",
+              data: {
+                  friendId: friend.id,
+                  projectId: {{ project.id }}
+              },
+
+              success: function() {
+                  alert("invitation sent successfully!");
+              }
+          })
+      }
+
+      {% endif %}
+
+      function leaveComment() {
+          $.ajax({
+              url: "{% url 'main:leave-comment' %}",
+              data: {
+                  text: $("#comment").val(),
+                  projectId: {{ project.id }}
+              },
+              success: function(comment) {
+                  $(".card-body").append(comment);
+              }
+
+          })
+      }
+
+      $("#comment").on("input",function () {
+          if($("#comment").val().length >= 10) {
+              $("#comment-submit").prop("disabled", false);
+          }else {
+              $("#comment-submit").prop("disabled", true);
+          }
+      });
+
+      {% if not user_rated %}
+          function rateProject() {
+              $.ajax({
+                  url: "{% url 'main:rate' %}",
+                  data: {
+                      rating: parseInt($("#rating").val()),
+                      id: {{ project.id }}
+                  },
+                  success: function() {
+                      field = $("#rating").parent();
+                      field.fadeOut();
+                      field.html("thanks for your rating");
+                      field.fadeIn();
+                  }
+              });
+          }
+      {% endif %}
+    </script>
+
+   <script src="https://maps.googleapis.com/maps/api/js?key=<your_key>&callback=initMap" async defer></script>
+
+{% endblock %}

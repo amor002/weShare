@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block head %}
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'main/home/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="{% static 'main/home/css/3-col-portfolio.css' %}" rel="stylesheet">
+
+
+{% endblock %}
+
+{% block body %}
+
+    {% if projects %}
+        <style>
+      .card-header-name {
+          font-family: 'Times New Roman', Times, serif;
+          font-size: 20px;
+          margin-bottom: 0;
+          margin-left: 5px;
+      }
+
+      .card-date {
+          color: #9c9c9c;
+          font-size: 10px;
+          margin-left: 180px;
+      }
+    </style>
+
+    {% endif %}
+    <!-- Navigation -->
+    {% include 'main/navbar.html' %}
+
+    <!-- Page Content -->
+    <div class="container">
+
+      {% if not_found %}
+          <h1 class="text-muted" style="text-align: center">{{ not_found }}</h1>
+          {% else %}
+          <!-- Page Heading -->
+          {% if projects %}
+          <h1 class="my-4">top projects</h1>
+          {% else %}
+          <h1 class="my-4">top results</h1>
+          {% endif %}
+
+      {% endif %}
+
+
+      <div id="container" class="row">
+        {% for project in projects %}
+        <div class="col-lg-4 col-sm-6 portfolio-item">
+
+          <div class="card h-100">
+              <div class="card-header" style="height: 80px">
+                <div class="row">
+                   <img src="{{ project.user.profile.image.url }}" alt="img" width="50" height="50"/>
+                    <p class="card-header-name">{{ project.user.username }}</p>
+                    <p class="card-date">{{ project.pub_date }}</p>
+                </div>
+              </div>
+            <a href="{% url 'main:view-project' project.pk %}"><img class="card-img-top" width="700" height="300" src="{{ project.image.url }}" alt="img"></a>
+            <div class="card-body">
+              <h4 class="card-title">
+                  <a href="{% url 'main:view-project' project.pk %}" style="margin-right: 5px">{{ project.name }}</a><span class="card-date" style="margin: 0;font-size: 13px">--{{ project.address }}</span>
+              </h4>
+              <p class="card-text">{{ project.description }}</p>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      {% for user in users %}
+
+        <div class="col-lg-4 col-sm-6 portfolio-item">
+          <div class="card h-100">
+            <a href="#"><img class="card-img-top" width="700" height="350" src="{{ user.profile.image.url }}" alt="img"></a>
+            <div class="card-body">
+              <h4 class="card-title">
+                <a href="#">{{ user.username }}</a>
+              </h4>
+                 <p class="card-text">name: {{ user.first_name }} {{ user.last_name }}</p>
+                 <p>email: {{ user.email }}</p>
+                {% if user.is_friend %}
+                    <div style="text-align: right"><p style="color: #132">already friends</p></div>
+                    {% elif user.request_sent %}
+                    <div style="text-align: right"><p style="color: #132">sent a request</p></div>
+                {% else %}
+                <div style="text-align: right"><a id="{{ user.pk }}" onclick="sendFriendRequest(this)" class="btn btn-primary" href="#">send friend request</a></div>
+                {% endif %}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+      </div>
+    </div>
+    <!-- /.container -->
+
+    <!-- Footer -->
+    {% include 'main/footer.html' %}
+
+{% endblock %}
+
+{% block javascript %}
+
+    <script>
+
+
+       var hasData = true;
+
+       function createCard(data) {
+           var card = document.createElement("div");
+           card.setAttribute("class", "col-lg-4 col-sm-6 portfolio-item");
+           card.innerHTML = data.html;
+           return card;
+
+       }
+
+       {% if users %}
+       function sendFriendRequest(e) {
+           $.ajax({
+               url: "{% url 'main:send-friend-request' %}",
+               type: "get" ,
+               data: {pk:parseInt(e.id)},
+               success: function(data) {
+                   $("#"+e.id).parent().html(data.html)
+               }
+
+
+
+           });
+       }
+
+       {% endif %}
+
+       {% if normal_account %}
+       {% include 'main/home/sync.js' %}
+       {% endif %}
+
+       function loadContent() {
+           $.ajax({
+               url: "{{ data_url }}",
+               type: 'get',
+               success: function(data) {
+                   if($(window).scrollTop() + $(window).height() >= $(document).height() - $(".container").height() - 700 && hasData) {
+                       hasData = data.html != undefined;
+                       if(!hasData) {
+                           return;
+                       }
+                       card = createCard(data);
+                       $("#container").append(card);
+                       loadContent();
+                   }
+               }
+           });
+       }
+       {% if not user_not_found %}
+        $(document).ready(function() {
+           loadContent();
+           $(window).scroll(function() {
+              if($(window).scrollTop() + $(window).height() >= $(document).height() - $(".container").height() - 700 && hasData) {
+                  loadContent();
+               }
+           });
+       });
+       {% endif %}
+    </script>
+
+{% endblock %}

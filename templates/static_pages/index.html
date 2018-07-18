@@ -1,0 +1,448 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block head %}
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <!-- Custom fonts for this template -->
+    <link href="{% static 'static_pages/index/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" />
+    <link href="{% static 'static_pages/index/vendor/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+
+    <!-- Plugin CSS -->
+    <link href="{% static 'static_pages/index/vendor/magnific-popup/magnific-popup.css' %}" rel="stylesheet">
+    <link href="{% static 'static_pages/index/css/login_modal.css' %}" type="text/css"/>
+
+    <!-- Custom styles for this template -->
+    <link href="{% static 'static_pages/index/css/creative.min.css' %}" rel="stylesheet">
+    <link href="{% static 'static_pages/index/css/creative.css' %}" rel="stylesheet">
+
+    <!--login model-->
+    <link href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <style>
+    #signup-form {
+      width: 700px;
+      background-color: #FFF;
+      box-shadow: 5px 5px 5px 5px #888888;
+      margin-top: 10px;
+      margin-bottom: 100px;
+    }
+
+
+    </style>
+
+  {% endblock %}
+
+  {% block body %}
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand js-scroll-trigger" href="#weShare">we Share</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#about">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#services">Services</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#portfolio">Portfolio</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link trigger-btn" id="login-btn" data-toggle="modal" href="#myModal">Login</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+<!-- Modal HTML -->
+<form method="post" action="{% url 'static-pages:login' %}" id="myModal" class="modal fade"> {% csrf_token %}
+	<div class="modal-dialog modal-login">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" style="margin-left:200px">Sign In</h4>
+                <button type="button" id="form-close" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			</div>
+			<div class="modal-body">
+				<form>
+					<div class="form-group">
+						<div class="input-group">
+							<span class="input-group-addon"><i class="fa fa-user"></i></span>
+							<input type="text" class="form-control" name="username" placeholder="Username" required="required">
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="input-group">
+							<span class="input-group-addon"><i class="fa fa-lock"></i></span>
+							<input type="password" class="form-control" name="password" placeholder="Password" required="required">
+						</div>
+					</div>
+
+					<div class="form-group">
+						<button type="submit" class="btn btn-primary btn-block btn-lg">Sign In</button>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer" style="margin-right: 120px;">Don't have an account? <a href="#" onclick="register()">register</a></div>
+            <p style="font-size: 15px;color: red;margin-left: 120px">{{ error_message }}</p>
+		</div>
+	</div>
+</form>
+
+    <header class="masthead text-center text-white d-flex">
+      <div class="container my-auto">
+        <div class="row">
+          <div class="col-lg-10 mx-auto">
+            <h1 class="text-uppercase">
+              <strong>weShare</strong>
+            </h1>
+            <hr>
+          </div>
+          <div class="col-lg-8 mx-auto">
+            <p class="text-faded mb-5">introducing a new platform for connection between bussiness and people!</p>
+            <a class="btn btn-primary btn-xl" onclick="scrollToEnd()" href="#about">get started!</a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="bg-primary" id="about">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 mx-auto text-center">
+            <h2 class="section-heading text-white">We've got what you need!</h2>
+            <hr class="light my-4">
+            <p class="text-faded mb-4">make friends with another users and suggest each other projects to see!</p>
+            <a class="btn btn-light btn-xl js-scroll-trigger" href="#services">find out more</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="services">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12 text-center">
+            <h2 class="section-heading">At Your Service</h2>
+            <hr class="my-4">
+          </div>
+        </div>
+      </div>
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-3 col-md-6 text-center">
+            <div class="service-box mt-5 mx-auto">
+              <i class="fa fa-4x fa-diamond text-primary mb-3 sr-icons"></i>
+              <h3 class="mb-3">where to go</h3>
+              <p class="text-muted mb-0">you can find places to go for spending your holidays.</p>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6 text-center">
+            <div class="service-box mt-5 mx-auto">
+              <i class="fa fa-4x fa-paper-plane text-primary mb-3 sr-icons"></i>
+              <h3 class="mb-3">make friends</h3>
+              <p class="text-muted mb-0">you can send friendship request to another users!</p>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6 text-center">
+            <div class="service-box mt-5 mx-auto">
+              <i class="fa fa-4x fa-newspaper-o text-primary mb-3 sr-icons"></i>
+              <h3 class="mb-3">write reviews</h3>
+              <p class="text-muted mb-0">you can write reviews and rate any project you like.</p>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6 text-center">
+            <div class="service-box mt-5 mx-auto">
+              <i class="fa fa-4x fa-heart text-primary mb-3 sr-icons"></i>
+              <h3 class="mb-3">Made with Love</h3>
+              <p class="text-muted mb-0">developed by <b><a href="https://www.facebook.com/amr.elmowaled">amr elmowaled</a></b> for friend and current CEO <b><a href="https://www.facebook.com/profile.php?id=100007384142069">ahmed mustafa</a></b></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="p-0" id="portfolio">
+      <div class="container-fluid p-0">
+        <div class="row no-gutters popup-gallery">
+          <div class="col-lg-4 col-sm-6">
+            <a class="portfolio-box" href="{% static 'static_pages/index/img/portfolio/fullsize/1.jpg' %}">
+              <img class="img-fluid" src="{% static 'static_pages/index/img/portfolio/thumbnails/1.jpg' %}" alt="">
+              <div class="portfolio-box-caption">
+                <div class="portfolio-box-caption-content">
+                  <div class="project-category text-faded">
+
+                  </div>
+                  <div class="project-name">
+
+                  </div>
+                </div>
+              </div>
+            </a>
+          </div>
+          <div class="col-lg-4 col-sm-6">
+            <a class="portfolio-box" href="{% static 'static_pages/index/img/portfolio/fullsize/2.jpg' %}">
+              <img class="img-fluid" src="{% static 'static_pages/index/img/portfolio/thumbnails/2.jpg' %}" alt="">
+              <div class="portfolio-box-caption">
+                <div class="portfolio-box-caption-content">
+                  <div class="project-category text-faded">
+
+                  </div>
+                  <div class="project-name">
+
+                  </div>
+                </div>
+              </div>
+            </a>
+          </div>
+          <div class="col-lg-4 col-sm-6">
+            <a class="portfolio-box" href="{% static 'static_pages/index/img/portfolio/fullsize/3.jpg' %}">
+              <img class="img-fluid" src="{% static 'static_pages/index/img/portfolio/thumbnails/3.jpg' %}" alt="">
+              <div class="portfolio-box-caption">
+                <div class="portfolio-box-caption-content">
+                  <div class="project-category text-faded">
+
+                  </div>
+                  <div class="project-name">
+
+                  </div>
+                </div>
+              </div>
+            </a>
+          </div>
+          <div class="col-lg-4 col-sm-6">
+            <a class="portfolio-box" href="{% static 'static_pages/index/img/portfolio/fullsize/4.jpg' %}">
+              <img class="img-fluid" src="{% static 'static_pages/index/img/portfolio/thumbnails/4.jpg' %}" alt="">
+              <div class="portfolio-box-caption">
+                <div class="portfolio-box-caption-content">
+                  <div class="project-category text-faded">
+
+                  </div>
+                  <div class="project-name">
+
+                  </div>
+                </div>
+              </div>
+            </a>
+          </div>
+          <div class="col-lg-4 col-sm-6">
+            <a class="portfolio-box" href="{% static 'static_pages/index/img/portfolio/fullsize/5.jpg' %}">
+              <img class="img-fluid" src="{% static 'static_pages/index/img/portfolio/thumbnails/5.jpg' %}" alt="">
+              <div class="portfolio-box-caption">
+                <div class="portfolio-box-caption-content">
+                  <div class="project-category text-faded">
+
+                  </div>
+                  <div class="project-name">
+
+                  </div>
+                </div>
+              </div>
+            </a>
+          </div>
+          <div class="col-lg-4 col-sm-6">
+            <a class="portfolio-box" href="{% static 'static_pages/index/img/portfolio/fullsize/6.jpg' %}">
+              <img class="img-fluid" src="{% static 'static_pages/index/img/portfolio/thumbnails/6.jpg' %}" alt="">
+              <div class="portfolio-box-caption">
+                <div class="portfolio-box-caption-content">
+                  <div class="project-category text-faded">
+
+                  </div>
+                  <div class="project-name">
+
+                  </div>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-dark text-white">
+      <div class="container text-center">
+        <h2 class="mb-4">Download the android app version for free</h2>
+        <a class="btn btn-light btn-xl sr-button disabled" href="#android-app">Coming Soon!</a>
+      </div>
+    </section>
+
+      <form id="signup-form" action="{% url 'main:create-user' %}" style="display: none" class="container" method="post">{% csrf_token %}
+          <h2 class="section-heading" style="text-align: center">register</h2>
+          <hr class="my-2"/>
+      <div class="row" style="padding: 5px">
+        <div>
+            <label class="control-label" for="username">username or company:</label>
+            <input type="text" class="form-control" style="width: 400px" maxlength="20" name="username" placeholder="enter your name..." id="username" required/>
+        </div>
+      </div>
+
+      <div class="row" style="padding: 5px">
+        <div>
+            <label class="control-label" for="email">email:</label>
+            <input type="email" class="form-control" style="width: 400px" name="email" placeholder="yourname@example.com" id="email" required/>
+        </div>
+      </div>
+
+      <div class="row" style="padding: 5px">
+        <div class="col-md-6">
+            <label class="control-label" for="firstname">first name:</label>
+            <input type="text" minlength="2" class="form-control" name="first_name" placeholder="enter your first name" id="firstname" required/>
+        </div>
+        <div class="col-md-6">
+            <label class="control-label" for="lastname" >last name:</label>
+            <input type="text" minlength="2" class="form-control"  name="last_name" placeholder="enter your first name" id="lastname" required/>
+        </div>
+      </div>
+
+      <div class="row" style="padding: 5px">
+        <div class="col-md-6">
+            <label class="control-label" for="password1">password</label>
+            <input type="password" class="form-control" name="password" placeholder="enter your password" id="password1" minlength="6" required/>
+        </div>
+        <div class="col-md-6">
+            <label class="control-label" for="password2" >password confirmation</label>
+            <input type="password" class="form-control"  name="password2" placeholder="enter your first name" id="password2" required/>
+        </div>
+      </div>
+
+      <div class="row">
+        <label class="control-label" for="option" style="margin-right: 20px;margin-left:5px">account type:</label>
+        <div id="option" class="radio" aria-required="true">
+            <label>
+                business
+            </label><input type="radio" id="radio1" style="margin-left: 5px"  name="user-type" value="business">
+
+            <label style="margin-left: 20px">normal user</label>
+            <input type="radio" id="radio2" style="margin-left: 5px" name="user-type" value="normal">
+        </div>
+      </div>
+
+          <p id="error-message" style="font-size: 15px;color: red"></p>
+      <br/>
+	  <script src='https://www.google.com/recaptcha/api.js'></script>
+          <div class="g-recaptcha" data-sitekey="<your_key>"></div>   
+          <button id="submit-profile" type="submit" style="text-align: center;margin-left: 280px;margin-bottom: 10px" class="btn btn-success" disabled>register</button>
+
+      </form>
+
+  {% endblock %}
+
+{% block javascript %}
+    <!-- Bootstrap core JavaScript -->
+    <script src="{% static 'static_pages/index/vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'bootstrap/js/bootstrap.bundle.js' %}"></script>
+
+    <!-- Plugin JavaScript -->
+    <script src="{% static 'static_pages/index/vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+    <script src="{% static 'static_pages/index/vendor/scrollreveal/scrollreveal.min.js' %}"></script>
+    <script src="{% static 'static_pages/index/vendor/magnific-popup/jquery.magnific-popup.min.js' %}"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="{% static 'static_pages/index/js/creative.min.js' %}"></script>
+
+    <script>
+    var errors = {};
+
+    function register() {
+
+        $("#myModal").modal('toggle');
+        $("#signup-form").css("display", "block");
+        $("#form-close").click();
+        scrollToEnd();
+    }
+
+    function scrollToEnd() {
+        $("#signup-form").css("display", "block");
+        $("html, body").animate({ scrollTop: $(document).height()-$(window).height()});
+
+    }
+
+    $("#submit-profile").click(function(e) {
+            if(!document.getElementById("radio1").checked && !document.getElementById("radio2").checked) {
+                e.preventDefault();
+                alert("you have to select your account type");
+            }
+        });
+
+    $("#username").on("input", function(e) {
+        $.ajax({
+            url: "{% url 'static-pages:validate-name' %}",
+            type: "get",
+            data: {"name": $("#username").val().trim()},
+            success: function(name) {
+                if($("#username").val().length < 3) {
+                    errors["name-is-short"] = "this name is too short";
+                }else {
+                  delete errors["name-is-short"];
+                }
+
+                if(name.exists) {
+                    errors["name-already-exists"] = "this user name already exists";
+                }else {
+                    delete errors["name-already-exists"];
+                }
+
+            }
+
+        });
+    });
+
+    $("#password1").on("input", function() {
+       if($("#password1").val().length < 6) {
+         errors["password-is-short"] = "this password is too short";
+       }else {
+         delete errors["password-is-short"];
+       }
+
+       if($("#password1").val() != $("#password2").val()) {
+            errors["passwords-not-same"] = "two passwords are not same";
+        }else {
+            delete errors["passwords-not-same"];
+        }
+    });
+
+    $("#password2").on("input", function() {
+        if($("#password1").val() != $("#password2").val()) {
+            errors["passwords-not-same"] = "two passwords are not same";
+        }else {
+            delete errors["passwords-not-same"];
+        }
+    });
+
+    function getErrors() {
+      var messages = "";
+      for(var error in errors) {
+        messages += errors[error] + "<br/>";
+      }
+      return messages;
+    }
+
+    function finishedTyping() {
+        var submitButton = $("#submit-profile");
+        $("#error-message").html(getErrors());
+        if(Object.keys(errors).length == 0) {
+            submitButton.removeAttr("disabled");
+        }else {
+            submitButton.attr("disabled", "disabled");
+        }
+    }
+
+    $(document).ready(function() {
+        {% if login_model_active %}
+            $("#login-btn").click();
+        {% endif %}
+       setInterval(finishedTyping, 1500);
+    });
+
+    </script>
+    {% endblock %}
